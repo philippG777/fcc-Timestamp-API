@@ -37,7 +37,7 @@ app.route('/_api/package.json')
   Timestamp API
 */
 app.get("/", (req, res, next) => {
-  res.type("txt").send("This is a timestamp API. Try /December%2017,%202015");
+  res.sendFile(process.cwd() + '/views/index.html');
 });
 
 
@@ -53,12 +53,22 @@ app.get("/:date", (req, res, next) => {
     date = new Date(pDate * 1000);  // convert to ms
   }
   
+  
+  let resp = {};
+  
+  if (isNaN(date.getTime()))
+  {
+    resp["unix"] = null;
+    resp["natural"] = null;
+    res.json(resp);
+    return;
+  }
+  
   let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];  // months in text
   let year = date.getFullYear();
   let month = months[date.getMonth()];
   let day = date.getDate();
   
-  let resp = {};
   resp["unix"] = date.valueOf() / 1000;  // convert to s
   resp["natural"] = month + " " + day + ", " + year;
   
